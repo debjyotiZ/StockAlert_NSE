@@ -1,0 +1,162 @@
+<html>
+<body>
+     
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
+  <script type="text/javascript" src="jquery-1.8.3.js"></script>
+  <script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+   <div>
+<input id="comp" placeholder="Enter a NSE company name"></input>
+<input id="tar" placeholder="Enter your targer price"></input>
+<button id = "but" onclick="func()"  style=" HEIGHT: 22PX;
+WIDTH: 89PX;"></button>
+
+   </div>
+    <textarea id="text1" style="
+    border: none; font-size: 50; ;">
+
+</textarea>
+<textarea id="text" style="
+    border: none; font-size: 63px;
+height: 30%; width: 100%;">
+
+</textarea>
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<script type="text/javascript">
+
+
+
+
+
+var comp = document.getElementById("comp").value
+ function func(){
+if(document.getElementById("comp").value != ""){
+$(function () {
+    $(document).ready(function () {
+        Highcharts.setOptions({
+            global: {
+                useUTC: false
+            }
+        });
+
+        $('#container').highcharts({
+            chart: {
+                type: 'spline',
+                animation: Highcharts.svg, // don't animate in old IE
+                marginRight: 10,
+                events: {
+                    load: function () {
+
+                        // set up the updating of the chart each second
+                        var series = this.series[0];
+                        var xmlhttprequest1 = new XMLHttpRequest(); //location='+query
+
+                        setInterval(function () {
+                          xmlhttprequest1.open('GET','/getStock?symbol='+document.getElementById("comp").value,false);
+
+xmlhttprequest1.send();
+ responseJSON1 = JSON.parse(xmlhttprequest1.responseText);
+                            var x = (new Date()).getTime(), // current time
+                                y = parseFloat(responseJSON1.data[0].lastPrice);
+                            series.addPoint([x, y], true, true);
+                        }, 1000);
+                    }
+                }
+            },
+            title: {
+                text: 'Live random data'
+            },
+            xAxis: {
+                type: 'datetime',
+                tickPixelInterval: 100
+            },
+            yAxis: {
+                title: {
+                    text: 'Value'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            },
+            tooltip: {
+                formatter: function () {
+                    return '<b>' + this.series.name + '</b><br/>' +
+                        Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+                        Highcharts.numberFormat(this.y, 2);
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            exporting: {
+                enabled: false
+            },
+            series: [{
+                name: 'Random data',
+                data: (function () {
+                    // generate an array of random data
+                    var data = [],
+                        time = (new Date()).getTime(),
+                        i;
+                       var xmlhttprequest1 = new XMLHttpRequest(); //location='+query
+xmlhttprequest1.open('GET','/getStock?symbol='+document.getElementById("comp").value,false);
+
+xmlhttprequest1.send();
+ responseJSON1 = JSON.parse(xmlhttprequest1.responseText);
+                     for (i = -19; i <= 0; i += 1) {
+                        data.push({
+                            x: time + i * 1000,
+                            y: parseFloat(responseJSON1.data[0].lastPrice)
+                        });
+                    }
+                    return data;
+                }())
+            }]
+        });
+    });
+});
+
+
+  window.price = 0;
+this.stockmain();
+}
+}
+function stockmain(){
+
+
+ var xmlhttprequest = new XMLHttpRequest(); //location='+query
+xmlhttprequest.open('GET','/getStock?symbol='+document.getElementById("comp").value,false);
+
+xmlhttprequest.send();
+ responseJSON = JSON.parse(xmlhttprequest.responseText);
+ document.getElementById("text1").value = responseJSON.data[0].companyName;
+document.getElementById("text").value = "lastPrice = "+responseJSON.data[0].lastPrice +"\n AVG = " +responseJSON.data[0].averagePrice +"\n buyPrice1 = "+responseJSON.data[0].buyPrice1;
+
+
+
+if(parseFloat(responseJSON.data[0].lastPrice) > window.price)
+{
+document.getElementById("text").style.backgroundColor="lime";
+}else {if(parseFloat(responseJSON.data[0].lastPrice) < window.price){
+document.getElementById("text").style.backgroundColor="red";
+}}
+
+window.price = parseFloat(responseJSON.data[0].lastPrice);
+
+var target = document.getElementById("tar").value
+if(parseFloat(document.getElementById("tar").value) <= parseFloat(responseJSON.data[0].lastPrice)){
+  alert("Please Sell the shares od DLF");
+  setTimeout(function(){this.stockmain()},5000);
+}
+else{
+  setTimeout(function(){this.stockmain()},500);
+
+}
+
+}
+
+</script>
+</body>
+</html>
