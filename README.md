@@ -6,7 +6,7 @@ A open source application where you can set a alert to your target value of stoc
 You need to do a npm install and you are ready to go.
 You can directly run the app.js using node.
 
-P.S : you have search with NSE listed company names with thier NSE listed names.
-You also have to enter a amount where you want the alert to come.
+P.S : you have to search with NSE listed company names with their NSE listed names.
+You also have to enter an amount where you want the alert to come.
 
-I have used Highcharts for charting and its open source for open source use purpose.
+I have used Highcharts for charting and it's open source for open source use purpose.
